@@ -12,7 +12,7 @@ x-env: &environment
     - TTL_ACCESS_TOKEN_MINUTES
 
 services:
-  vpn-bot:
+  bookstore-api:
     image: bookstore-api
     build:
       context: .
@@ -22,7 +22,7 @@ services:
     ports:
       - "127.0.0.1:8200:8000"
     volumes:
-      - /opt/docker/vpn-bot/log:/opt/app/log/
+      - /opt/docker/bookstore/log:/opt/app/log/
     restart: always
 
 networks:

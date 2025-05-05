@@ -53,6 +53,8 @@ RUN poetry install --only main --no-interaction --no-root
 COPY ./bookstore /opt/app/bookstore
 COPY ./bin /opt/app/bin
 
+RUN chmod -R +x /opt/app/bin
+
 VOLUME '/opt/app/log'
 
 EXPOSE 8000
