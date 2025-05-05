@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+set -e
+
+CMD=$1
+ARGS="${@:2}"
+
+env | sort > /etc/environment
+
+if [ "${CMD}" = "initial" ]; then
+    alembic upgrade head
+    uvicorn bookstore.api.routers --reload
+fi
+
+exec $CMD $ARGS

@@ -1,0 +1,31 @@
+version: '3'
+
+x-env: &environment
+  environment:
+    - DB_HOST
+    - DB_PORT
+    - DB_NAME
+    - DB_USER
+    - DB_PASSWORD
+    - SECRET_KEY
+    - ALGORITHM
+    - TTL_ACCESS_TOKEN_MINUTES
+
+services:
+  vpn-bot:
+    image: bookstore-api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: initial
+    <<: *environment
+    ports:
+      - "127.0.0.1:8200:8000"
+    volumes:
+      - /opt/docker/vpn-bot/log:/opt/app/log/
+    restart: always
+
+networks:
+  default:
+    name: bookstore-api-network
+    external: true
