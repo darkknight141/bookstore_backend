@@ -9,7 +9,7 @@ env | sort > /etc/environment
 
 if [ "${CMD}" = "initial" ]; then
     alembic upgrade head
-    uvicorn bookstore.api.routers --reload
+    uvicorn bookstore.api.routers:app --host 0.0.0.0 --port 8000 --reload
 fi
 
 exec $CMD $ARGS

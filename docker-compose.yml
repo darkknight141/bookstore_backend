@@ -2,16 +2,29 @@ version: '3'
 
 x-env: &environment
   environment:
-    - DB_HOST
-    - DB_PORT
-    - DB_NAME
-    - DB_USER
-    - DB_PASSWORD
-    - SECRET_KEY
-    - ALGORITHM
-    - TTL_ACCESS_TOKEN_MINUTES
+    DB_HOST: db
+    DB_PORT: 5432
+    DB_NAME: bookstore
+    DB_USER: postgres
+    DB_PASSWORD: docker
+    SECRET_KEY: 5f579fe94bfa62ecd5b7b93d5434b462ebaa934e56a83c7ace024e1a7671e991
+    ALGORITHM: HS256
+    TTL_ACCESS_TOKEN_MINUTES: 30
 
 services:
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: docker
+      POSTGRES_DB: bookstore
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    restart: always
+
+
   bookstore-api:
     image: bookstore-api
     build:
@@ -23,7 +36,12 @@ services:
       - "127.0.0.1:8200:8000"
     volumes:
       - /opt/docker/bookstore/log:/opt/app/log/
+    depends_on:
+      - db
     restart: always
+
+volumes:
+  postgres_data:
 
 networks:
   default:
