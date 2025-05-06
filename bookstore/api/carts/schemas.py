@@ -6,6 +6,7 @@ from pydantic import BaseModel
 class BooksInCartSchema(BaseModel):
     id_book: int
     count_book: int
+    price: int
 
 
 class CartsSchema(BaseModel):

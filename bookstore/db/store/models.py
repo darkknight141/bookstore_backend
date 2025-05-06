@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional
 
-from sqlalchemy import ForeignKey, LargeBinary
+from sqlalchemy import ForeignKey, LargeBinary, Integer
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from bookstore.db.database import Base, int_pk, str_null_true
@@ -15,6 +15,7 @@ class Book(Base):
     image: Mapped[Optional[bytes]] = mapped_column(LargeBinary, nullable=True)
     id_author: Mapped[int] = mapped_column(ForeignKey('authors.id'), nullable=False)
     author: Mapped['Author'] = relationship('Author', backref='books')
+    price: Mapped[int] = mapped_column(Integer, nullable=False)
 
     def __str__(self) -> str:
         return (
@@ -61,7 +62,6 @@ class Cart(Base):
     id_user: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable=False)
     id_books: Mapped[int] = mapped_column(ForeignKey('books.id'), nullable=False)
     count_book: Mapped[int]
-    user: Mapped[User] = relationship('User', backref='carts_book')
     book: Mapped[Book] = relationship('Book', backref='carts_user')
 
     def __str__(self) -> str:
@@ -77,6 +77,7 @@ class Cart(Base):
 class Tag(Base):
     id: Mapped[int_pk]
     name: Mapped[str] = mapped_column(nullable=False)
+    discount: Mapped[int] = mapped_column(Integer, nullable=True)
 
     def __str__(self) -> str:
         return (
@@ -92,8 +93,6 @@ class TagToBook(Base):
     id: Mapped[int_pk]
     id_book: Mapped[int] = mapped_column(ForeignKey('books.id'), nullable=False)
     id_tag: Mapped[int] = mapped_column(ForeignKey('tags.id'), nullable=False)
-    book: Mapped[Book] = relationship('Book', backref='tags_book')
-    tag: Mapped[Tag] = relationship('Tag', backref='tags_user')
 
     def __str__(self) -> str:
         return f'{self.__class__.__name__} {self.id}'

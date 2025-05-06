@@ -12,6 +12,8 @@ from db.database import get_session
 from db.store.models import User
 from settings.config import settings
 
+from bookstore.api.exceptions import ClientException
+
 
 class UserService:
     def __init__(self, session: AsyncSession) -> None:
@@ -25,10 +27,7 @@ class UserService:
     async def registration(self, data: CreateUserSchema) -> None:
         is_exist = await self._validate_login(data.model_dump()['login'])
         if is_exist:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="User already exists",
-            )
+            raise ClientException(detail="Пользователь уже создан")
         hash_password = self._hash_password(data.model_dump()['password'])
         user = User(login=data.model_dump()['login'], password=hash_password)
         self.session.add(user)
@@ -38,16 +37,10 @@ class UserService:
         user = await self.session.execute(select(User).where(User.login == data.model_dump()['login']))
         user = user.scalar()
         if not user:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Incorrect login",
-            )
+            raise ClientException(detail="Некорректный логин")
         is_verify_password = self._verify_password(data.model_dump()['password'], user.password)
         if not is_verify_password:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Incorrect password",
-            )
+            raise ClientException(detail="Некорректный пароль")
         access_token = self._create_access_token(data)
         return {'access_token': access_token}
 
