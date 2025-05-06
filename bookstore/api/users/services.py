@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta, timezone
+from typing import Self
 
 import jwt
 from fastapi import Depends, HTTPException
@@ -21,7 +22,7 @@ class UserService:
         self.pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
     @classmethod
-    def from_request(cls, session: AsyncSession = Depends(get_session)):
+    def from_request(cls, session: AsyncSession = Depends(get_session)) -> Self:
         return cls(session)
 
     async def registration(self, data: CreateUserSchema) -> None:
@@ -63,7 +64,7 @@ class UserService:
         exist_user = exist_user.scalar()
         return exist_user
 
-    async def get_current_user(self, login: str):
+    async def get_current_user(self, login: str) -> User:
         user = await self.session.execute(select(User).where(User.login == login))
         user = user.scalar()
         return user

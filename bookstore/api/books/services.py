@@ -1,4 +1,4 @@
-from typing import Sequence
+from typing import Sequence, Self
 
 from fastapi import Depends
 from sqlalchemy import select
@@ -14,7 +14,7 @@ class BookService:
         self.session = session
 
     @classmethod
-    def from_request(cls, session: AsyncSession = Depends(get_session)):
+    def from_request(cls, session: AsyncSession = Depends(get_session)) -> Self:
         return cls(session=session)
 
     async def list_books(self, query_params: FilterParams) -> Sequence[Book]:

@@ -60,7 +60,7 @@ class User(Base):
 class Cart(Base):
     id: Mapped[int_pk]
     id_user: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable=False)
-    id_books: Mapped[int] = mapped_column(ForeignKey('books.id'), nullable=False)
+    id_book: Mapped[int] = mapped_column(ForeignKey('books.id'), nullable=False)
     count_book: Mapped[int]
     book: Mapped[Book] = relationship('Book', backref='carts_user')
 

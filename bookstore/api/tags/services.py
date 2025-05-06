@@ -1,4 +1,4 @@
-from typing import Sequence
+from typing import Sequence, Self
 
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -14,7 +14,7 @@ class TagsService:
         self.session = session
 
     @classmethod
-    def from_request(cls, session: AsyncSession = Depends(get_session)):
+    def from_request(cls, session: AsyncSession = Depends(get_session)) -> Self:
         return cls(session=session)
 
     async def list_tags(self) -> Sequence[Tag]:
