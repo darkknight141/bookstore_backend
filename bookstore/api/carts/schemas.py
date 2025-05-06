@@ -3,33 +3,33 @@ from typing import List, Optional
 from pydantic import BaseModel
 
 
-class BooksInCartSchema(BaseModel):
+class CartItemSchema(BaseModel):
     id_book: int
     count_book: int
     price: int
 
 
-class CartsSchema(BaseModel):
+class CartSchema(BaseModel):
     id_user: int
-    items: List[BooksInCartSchema]
+    items: List[CartItemSchema]
 
 
-class CreateCart(BaseModel):
+class CreateCartItemSchema(BaseModel):
     book_id: int
     count_book: int
 
 
-class RetrieveCart(CartsSchema):
+class RetrieveCart(CartSchema):
 
     class Config:
         from_attributes = True
 
 
-class UpdateCart(CreateCart):
+class UpdateCartItemSchema(BaseModel):
     count_book: Optional[int] = None
 
 
-class GetAddedBookFromCart(BaseModel):
+class AddedBookFromCartSchema(BaseModel):
     id_user: int
     id_books: int
     count_book: int

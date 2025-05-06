@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from db.database import get_session
 from db.store.models import Author
-from api.authors.schemas import UpdateAuthorSchema, CreateAuthorSchema
+from api.authors.schemas import UpdateAuthorSchema, CreateAuthorSchema, FilterAuthorSchema
 
 
 class AuthorService:
@@ -17,8 +17,12 @@ class AuthorService:
     def from_request(cls, session: AsyncSession = Depends(get_session)) -> Self:
         return cls(session=session)
 
-    async def list_author(self) -> Sequence[Author]:
-        result = await self.session.execute(select(Author))
+    async def list_author(self, query_params: FilterAuthorSchema) -> Sequence[Author]:
+        query = select(Author)
+        if query_params:
+            for key, value in query_params.model_dump(exclude_unset=True).items():
+                query = query.where(getattr(Author, key) == value)
+        result = await self.session.execute(query)
         return result.scalars().all()
 
     async def retrieve_author(self, author_id: int) -> Author:

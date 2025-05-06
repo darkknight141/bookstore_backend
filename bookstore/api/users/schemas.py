@@ -1,20 +1,23 @@
 from pydantic import BaseModel
 
 
-class UserSchema(BaseModel):
+class UserBaseSchema(BaseModel):
     login: str
-    password: str
 
 
-class RetrieveUserSchema(UserSchema):
+class UserRetrieveSchema(UserBaseSchema):
     id: int
 
     class Config:
         from_attributes = True
 
 
-class CreateUserSchema(UserSchema):
-    pass
+class UserCreateSchema(UserBaseSchema):
+    password: str
+
+
+class UserLoginSchema(UserBaseSchema):
+    password: str
 
 
 class TokenSchema(BaseModel):
