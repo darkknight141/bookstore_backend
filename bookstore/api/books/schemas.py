@@ -10,6 +10,7 @@ class BookSchema(BaseModel):
     year_created: int
     image: bytes
     id_author: int
+    price: int
 
 
 class ListBookSchema(BaseModel):

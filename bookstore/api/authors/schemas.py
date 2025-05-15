@@ -8,7 +8,7 @@ class AuthorSchema(BaseModel):
     first_name: str
     last_name: str
     middle_name: str
-    born_year: datetime.datetime
+    born_year: datetime.date
     country: str
 
 
@@ -34,7 +34,7 @@ class UpdateAuthorSchema(AuthorSchema):
     first_name: Optional[str] = None
     last_name: Optional[str] = None
     middle_name: Optional[str] = None
-    born_year: Optional[datetime.datetime] = None
+    born_year: Optional[datetime.date] = None
     country: Optional[str] = None
 
 

@@ -1,7 +1,6 @@
 FROM python:3.12-slim-bullseye
 
 # SYSTEM ENV
-
 ENV PATH "/opt/app/bin:$PATH"
 ENV POETRY_HOME=/opt/poetry
 ENV POETRY_VIRTUALENVS_CREATE False

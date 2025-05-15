@@ -24,6 +24,7 @@ services:
     ports:
       - "127.0.0.1:8200:8000"
     volumes:
+      - ./bookstore:/opt/app/bookstore
       - /opt/docker/bookstore/log:/opt/app/log/
     depends_on:
       - db
