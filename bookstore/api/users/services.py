@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from passlib.context import CryptContext
 from starlette import status
 
-from api.users.schemas import CreateUserSchema
+from api.users.schemas import UserCreateSchema
 from db.database import get_session
 from db.store.models import User
 from settings.config import settings
@@ -25,7 +25,7 @@ class UserService:
     def from_request(cls, session: AsyncSession = Depends(get_session)) -> Self:
         return cls(session)
 
-    async def registration(self, data: CreateUserSchema) -> None:
+    async def registration(self, data: UserCreateSchema) -> None:
         is_exist = await self._validate_login(data.model_dump()['login'])
         if is_exist:
             raise ClientException(detail="Пользователь уже создан")
@@ -34,7 +34,7 @@ class UserService:
         self.session.add(user)
         await self.session.commit()
 
-    async def login(self, data: CreateUserSchema) -> dict[str, str]:
+    async def login(self, data: UserCreateSchema) -> dict[str, str]:
         user = await self.session.execute(select(User).where(User.login == data.model_dump()['login']))
         user = user.scalar()
         if not user:

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from fastapi.security import HTTPBearer
 
-from api.carts.schemas import CartsSchema, CreateCart, UpdateCart, RetrieveCart, GetAddedBookFromCart
+from api.carts.schemas import CreateCartItemSchema, RetrieveCart, UpdateCartItemSchema, AddedBookFromCartSchema
 from api.carts.services import CartsService
 from api.security import verify_token
 
@@ -12,14 +12,14 @@ carts_router = APIRouter(tags=['Carts'], dependencies=[Depends(oauth2_scheme)])
 @carts_router.get('/carts/', response_model=RetrieveCart)
 async def get_cart(
         user=Depends(verify_token),
-        service: CreateCart = Depends(CartsService.from_request),
+        service: CartsService = Depends(CartsService.from_request),
 ):
     return await service.get_cart(user)
 
 
-@carts_router.post('/carts/', response_model=GetAddedBookFromCart)
+@carts_router.post('/carts/', response_model=AddedBookFromCartSchema)
 async def add_book_to_cart(
-        cart_data: CreateCart,
+        cart_data: CreateCartItemSchema,
         user=Depends(verify_token),
         service: CartsService = Depends(CartsService.from_request)
 ):
@@ -28,7 +28,7 @@ async def add_book_to_cart(
 
 @carts_router.patch('/carts/{book_id}')
 async def update_book_from_cart(
-        cart_data: UpdateCart,
+        cart_data: UpdateCartItemSchema,
         book_id: int,
         user=Depends(verify_token),
         service: CartsService = Depends(CartsService.from_request)

@@ -4,7 +4,7 @@ from fastapi import Depends
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from api.carts.schemas import CreateCart, UpdateCart, RetrieveCart, BooksInCartSchema
+from api.carts.schemas import RetrieveCart, CartItemSchema, CreateCartItemSchema, UpdateCartItemSchema
 from db.database import get_session
 from db.store.models import Cart, User
 
@@ -21,7 +21,7 @@ class CartsService:
         carts = await self.session.execute(select(Cart).where(Cart.id_user == user.id))
         carts = carts.scalars().all()
         books_in_cart = [
-            BooksInCartSchema(id_book=cart.id_book, count_book=cart.count_book, price=cart.book.price)
+            CartItemSchema(id_book=cart.id_book, count_book=cart.count_book, price=cart.book.price)
             for cart in carts
         ]
         return RetrieveCart(
@@ -29,7 +29,7 @@ class CartsService:
             items=books_in_cart
         )
 
-    async def add_book_to_cart(self, cart_data: CreateCart, user: User) -> Cart:
+    async def add_book_to_cart(self, cart_data: CreateCartItemSchema, user: User) -> Cart:
         cart_data = cart_data.model_dump()
         new_cart = Cart(
             id_user=user.id,
@@ -40,7 +40,7 @@ class CartsService:
         await self.session.commit()
         return new_cart
 
-    async def update_book_from_cart(self, book_id: int, user: User, cart_data: UpdateCart) -> RetrieveCart:
+    async def update_book_from_cart(self, book_id: int, user: User, cart_data: UpdateCartItemSchema) -> RetrieveCart:
         cart_data = cart_data.model_dump(exclude_unset=True)
         item = await self.session.execute(select(Cart).where(Cart.id_user == user.id, Cart.id_books == book_id))
         item = item.scalar()
@@ -49,7 +49,7 @@ class CartsService:
         await self.session.commit()
         result = await self.get_cart(user)
         books_in_cart = [
-            BooksInCartSchema(id_book=cart.id_book, count_book=cart.count_book) for cart in result]
+            CartItemSchema(id_book=cart.id_book, count_book=cart.count_book) for cart in result]
         return RetrieveCart(
             id_user=user.id,
             items=books_in_cart

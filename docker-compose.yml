@@ -4,14 +4,12 @@ version: '3'
 services:
   db:
     image: postgres:latest
-    environment:
-      - POSTGRES_USER = ${DB_USER}
-      - POSTGRES_PASSWORD = ${POSTGRES_PASSWORD}
-      - POSTGRES_DB = ${POSTGRES_DB}
     ports:
       - "127.0.0.1:5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - .env
     restart: always
 
 
@@ -21,15 +19,8 @@ services:
       context: .
       dockerfile: Dockerfile
     command: initial
-    environment:
-      - DB_HOST = "db"
-      - DB_PORT = ${DB_PORT}
-      - DB_NAME = ${DB_NAME}
-      - DB_USER = ${DB_USER}
-      - DB_PASSWORD = ${DB_PASSWORD}
-      - SECRET_KEY = ${SECRET_KEY}
-      - ALGORITHM = ${ALGORITHM}
-      - TTL_ACCESS_TOKEN_MINUTES = ${TTL_ACCESS_TOKEN_MINUTES}
+    env_file:
+      - .env
     ports:
       - "127.0.0.1:8200:8000"
     volumes:
