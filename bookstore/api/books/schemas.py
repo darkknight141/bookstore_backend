@@ -1,7 +1,7 @@
 import datetime
 from typing import Optional
 
-from pydantic import BaseModel, Field, ValidationError, field_validator
+from pydantic import BaseModel, Field, field_validator
 
 
 class BookSchema(BaseModel):
@@ -32,11 +32,10 @@ class RetrieveBookSchema(BookSchema):
 class CreateBookSchema(BookSchema):
     pass
 
-    @classmethod
     @field_validator('year_created')
     def validate_year_created(cls, year_created: int):
         if year_created > datetime.datetime.now().year:
-            raise ValidationError("Year must be less than current year")
+            raise ValueError("Year must be less than current year")
         return year_created
 
 
