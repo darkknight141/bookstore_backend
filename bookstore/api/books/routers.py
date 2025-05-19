@@ -25,7 +25,8 @@ async def get_book(
 @books_router.post('/books', response_model=RetrieveBookSchema)
 async def create_book(
         book: CreateBookSchema,
-        service: BookService = Depends(BookService.from_request)):
+        service: BookService = Depends(BookService.from_request)
+):
     return await service.create_book(book)
 
 

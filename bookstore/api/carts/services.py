@@ -1,12 +1,14 @@
 from typing import Self
 
 from fastapi import Depends
-from sqlalchemy import select
+from sqlalchemy import select, exists
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from api.carts.schemas import RetrieveCart, CartItemSchema, CreateCartItemSchema, UpdateCartItemSchema
+from api.carts.schemas import RetrieveCart, CartItemSchema, CreateCartItemSchema, UpdateCartItemSchema, \
+    AddedBookFromCartSchema
+from bookstore.api.exceptions import NotFoundException
 from db.database import get_session
-from db.store.models import Cart, User
+from db.store.models import Cart, User, Book
 
 
 class CartsService:
@@ -29,16 +31,23 @@ class CartsService:
             items=books_in_cart
         )
 
-    async def add_book_to_cart(self, cart_data: CreateCartItemSchema, user: User) -> Cart:
+    async def add_book_to_cart(self, cart_data: CreateCartItemSchema, user: User) -> AddedBookFromCartSchema:
         cart_data = cart_data.model_dump()
+        if not await self._validate_book(cart_data['book_id']):
+            raise NotFoundException("Данная книга не найдена")
         new_cart = Cart(
             id_user=user.id,
-            id_books=cart_data['book_id'],
+            id_book=cart_data['book_id'],
             count_book=cart_data['count_book'],
         )
         self.session.add(new_cart)
         await self.session.commit()
-        return new_cart
+        response_data = AddedBookFromCartSchema(
+            id_user=user.id,
+            id_book=new_cart.id_book,
+            count_book=new_cart.count_book,
+        )
+        return response_data
 
     async def update_book_from_cart(self, book_id: int, user: User, cart_data: UpdateCartItemSchema) -> RetrieveCart:
         cart_data = cart_data.model_dump(exclude_unset=True)
@@ -61,5 +70,7 @@ class CartsService:
             await self.session.delete(item)
             await self.session.commit()
 
-
-
+    async def _validate_book(self, book_id: int) -> bool:
+        exist_book = await self.session.execute(select(exists().where(Book.id == book_id)))
+        exist_book = exist_book.scalar()
+        return exist_book

@@ -31,7 +31,7 @@ class UpdateCartItemSchema(BaseModel):
 
 class AddedBookFromCartSchema(BaseModel):
     id_user: int
-    id_books: int
+    id_book: int
     count_book: int
 
     class Config:

@@ -14,7 +14,8 @@ app = FastAPI()
 
 
 @app.exception_handler(BaseServiceException)
-async def http_exception_handler(exc: BaseServiceException):
+def http_exception_handler(request: Request, exc: BaseServiceException):
+    print('here')
     return JSONResponse(
         status_code=exc.status_code,
         content={"detail": exc.detail},

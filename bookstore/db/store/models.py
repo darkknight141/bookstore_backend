@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional
 
-from sqlalchemy import ForeignKey, LargeBinary, Integer
+from sqlalchemy import ForeignKey, LargeBinary, Integer, Date
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from bookstore.db.database import Base, int_pk, str_null_true
@@ -32,7 +32,7 @@ class Author(Base):
     first_name: Mapped[str_null_true]
     last_name: Mapped[str_null_true]
     middle_name: Mapped[str_null_true]
-    born_year: Mapped[datetime]
+    born_year: Mapped[datetime] = mapped_column(Date(), nullable=True)
     country: Mapped[str_null_true]
 
     def __str__(self) -> str:

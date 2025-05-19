@@ -1,11 +1,12 @@
 from typing import Sequence, Self
 
 from fastapi import Depends
-from sqlalchemy import select
+from sqlalchemy import select, exists
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from bookstore.api.exceptions import NotFoundException
 from db.database import get_session
-from db.store.models import Book
+from db.store.models import Book, Author
 from api.books.schemas import CreateBookSchema, UpdateBookSchema, FilterParams
 
 
@@ -30,6 +31,9 @@ class BookService:
         return result
 
     async def create_book(self, data: CreateBookSchema) -> Book:
+        exists_author = await self._validate_author(data.model_dump()['id_author'])
+        if not exists_author:
+            raise NotFoundException("Автор не найден")
         book = Book(**data.model_dump())
         self.session.add(book)
         await self.session.commit()
@@ -47,3 +51,8 @@ class BookService:
         if book:
             await self.session.delete(book)
             await self.session.commit()
+
+    async def _validate_author(self, author_id: int) -> bool:
+        exist_author = await self.session.execute(select(exists().where(Author.id == author_id)))
+        exist_author = exist_author.scalar()
+        return exist_author

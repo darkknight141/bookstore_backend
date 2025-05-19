@@ -23,6 +23,7 @@ dependencies = [
 
 [tool.poetry]
 packages = [{include = "*", from="bookstore"}]
+package-mode = false
 
 
 [build-system]

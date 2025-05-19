@@ -12,6 +12,9 @@ class Settings(BaseSettings):
     ALGORITHM: str
     TTL_ACCESS_TOKEN_MINUTES: int
 
+    class Config:
+        env_file = '.env'
+
     def get_db_url(self) -> str:
         return (
             f"postgresql+asyncpg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@"

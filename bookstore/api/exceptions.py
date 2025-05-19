@@ -15,11 +15,6 @@ class ForbiddenException(BaseServiceException):
         super().__init__(detail=detail, status_code=status.HTTP_403_FORBIDDEN)
 
 
-class NotFoundException(BaseServiceException):
-    def __init__(self, detail: str = "Не найдено в базе данных"):
-        super().__init__(detail=detail, status_code=status.HTTP_404_NOT_FOUND)
-
-
 class NotAuthorizedException(BaseServiceException):
     def __init__(self, detail: str = "Не авторизован"):
         super().__init__(detail=detail, status_code=status.HTTP_401_UNAUTHORIZED)
@@ -30,3 +25,6 @@ class ClientException(BaseServiceException):
         super().__init__(detail=detail, status_code=status.HTTP_400_BAD_REQUEST)
 
 
+class NotFoundException(BaseServiceException):
+    def __init__(self, detail: str):
+        super().__init__(detail=detail, status_code=status.HTTP_404_NOT_FOUND)

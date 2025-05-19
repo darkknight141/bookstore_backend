@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 74cefdbba28d
+Revision ID: 37f8dc0dd6c5
 Revises: 
-Create Date: 2025-04-28 16:23:47.406643
+Create Date: 2025-05-16 14:41:52.296601
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '74cefdbba28d'
+revision: str = '37f8dc0dd6c5'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -26,7 +26,7 @@ def upgrade() -> None:
     sa.Column('first_name', sa.String(), nullable=True),
     sa.Column('last_name', sa.String(), nullable=True),
     sa.Column('middle_name', sa.String(), nullable=True),
-    sa.Column('born_year', sa.DateTime(), nullable=False),
+    sa.Column('born_year', sa.Date(), nullable=True),
     sa.Column('country', sa.String(), nullable=True),
     sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
     sa.Column('updated_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
@@ -35,6 +35,7 @@ def upgrade() -> None:
     op.create_table('tags',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
+    sa.Column('discount', sa.Integer(), nullable=True),
     sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
     sa.Column('updated_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
     sa.PrimaryKeyConstraint('id')
@@ -54,6 +55,7 @@ def upgrade() -> None:
     sa.Column('year_created', sa.Integer(), nullable=True),
     sa.Column('image', sa.LargeBinary(), nullable=True),
     sa.Column('id_author', sa.Integer(), nullable=False),
+    sa.Column('price', sa.Integer(), nullable=False),
     sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
     sa.Column('updated_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
     sa.ForeignKeyConstraint(['id_author'], ['authors.id'], ),
@@ -62,11 +64,11 @@ def upgrade() -> None:
     op.create_table('carts',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('id_user', sa.Integer(), nullable=False),
-    sa.Column('id_books', sa.Integer(), nullable=False),
+    sa.Column('id_book', sa.Integer(), nullable=False),
     sa.Column('count_book', sa.Integer(), nullable=False),
     sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
     sa.Column('updated_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
-    sa.ForeignKeyConstraint(['id_books'], ['books.id'], ),
+    sa.ForeignKeyConstraint(['id_book'], ['books.id'], ),
     sa.ForeignKeyConstraint(['id_user'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
